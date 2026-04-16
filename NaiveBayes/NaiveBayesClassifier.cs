@@ -39,7 +39,7 @@ public class NaiveBayesClassifier
 
     private void CalculateConditionalProbabilities(List<Observation> dataset)
     {
-        var featureNames = dataset.First().Features.Keys; // ["Nogi", "Jaja", ... ,]
+        var featureNames = dataset.First().Features.Keys; // ["Nogi", "Futro", ... ,]
         var decisionValues = _priorProbabilities.Keys; // ["Tak, "Nie"]
         
         var uniqueValuesCount = featureNames.ToDictionary(
@@ -52,10 +52,10 @@ public class NaiveBayesClassifier
             name => dataset.Select(o => o.Features[name]).Distinct().ToList()
         );
         
-        foreach (var VARIABLE in allPossibleValues)
-        {
-            Console.WriteLine(string.Join(VARIABLE.Key, VARIABLE.Value));
-        }
+        // foreach (var VARIABLE in allPossibleValues)
+        // {
+        //     Console.WriteLine(string.Join(VARIABLE.Key, VARIABLE.Value));
+        // }
 
         foreach (var decision in decisionValues)
         {
@@ -95,7 +95,37 @@ public class NaiveBayesClassifier
 
         }
 
-        Console.WriteLine(decisionValues);
+    }
+
+    public string Predict(Observation toPredict)
+    {
+        string bestDecision = null;
+        double highestScore = -1.0;
+
+        foreach (var decision in _priorProbabilities.Keys)
+        {
+            double currentScore = _priorProbabilities[decision];
+
+            foreach (var feature in toPredict.Features)
+            {
+                string featureName = feature.Key;
+                string featureValue = feature.Value;
+                
+                if (_conditionalProbabilities[decision].ContainsKey(featureName) &&
+                    _conditionalProbabilities[decision][featureName].ContainsKey(featureValue))
+                {
+                    currentScore *= _conditionalProbabilities[decision][featureName][featureValue];
+                }
+            }
+            
+            if (currentScore > highestScore)
+            {
+                highestScore = currentScore;
+                bestDecision = decision;
+            }
+        }
+
+        return bestDecision;
     }
 
     public double SimpleSmoothing(int numerator, int denominator, int classes)
