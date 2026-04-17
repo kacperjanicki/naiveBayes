@@ -43,7 +43,7 @@
 
             NaiveBayesClassifier classifier = new NaiveBayesClassifier(true,allData);
             
-            foreach (var testCase in testDataset)
+            foreach (var testCase in trainDataset)
             {
                 string prediction = classifier.Predict(testCase);
                 Console.WriteLine($"{testCase}, Przewidziano: {prediction}");
@@ -52,7 +52,7 @@
             List<string> realLabels = testDataset.Select(o => o.Decision).ToList();
             List<string> predictedLabels = new List<string>();
 
-            foreach (var testCase in testDataset)
+            foreach (var testCase in trainDataset)
             {
                 predictedLabels.Add(classifier.Predict(testCase));
             }

@@ -15,7 +15,12 @@ public class NaiveBayesClassifier
         CalculateConditionalProbabilities(trainDataset);
 
     }
-    
+    // jak czesto dana decyzja wystepuje w stosunku do calego zbioru treningowego
+    // _priorProbabilities = 
+    // {
+    //  "yes": 0.32,
+    //  "no": 0.68
+    // }
     private void CalculatePriorProbabilities(List<Observation> dataset)
     {
         int allOccurences = dataset.Count;
@@ -37,6 +42,19 @@ public class NaiveBayesClassifier
         }
     }
 
+    /* {
+        "yes": {
+            "outlook": {
+                "sunny": 0.222,
+                "overcast": 0.444,
+                "rainy": 0.333
+            },
+            "temperature": {
+                "hot": 0.222,
+            },
+        "no": {
+        }
+    }*/
     private void CalculateConditionalProbabilities(List<Observation> dataset)
     {
         var featureNames = dataset.First().Features.Keys; // ["Nogi", "Futro", ... ,]
@@ -46,17 +64,14 @@ public class NaiveBayesClassifier
             name => name,
             name => dataset.Select(o => o.Features[name]).Distinct().Count()
         );
+        // => { "outlook": 3, ... } 
         
         var allPossibleValues = featureNames.ToDictionary(
             name => name,
             name => dataset.Select(o => o.Features[name]).Distinct().ToList()
         );
+        // => { "outlook": ["sunny", "overcast", "rainy"], ... } 
         
-        // foreach (var VARIABLE in allPossibleValues)
-        // {
-        //     Console.WriteLine(string.Join(VARIABLE.Key, VARIABLE.Value));
-        // }
-
         foreach (var decision in decisionValues)
         {
             _conditionalProbabilities[decision] = new Dictionary<string, Dictionary<string, double>>();
