@@ -17,7 +17,7 @@ public class EvaluationMetrics
 
         return (double)correct / realLabels.Count;
     }
-    
+    // Z tych które model zakwalifikował jako TAK, ile faktycznie było TAK
     public double MeasurePrecision(List<string> realLabels, List<string> predictedLabels, string targetClass)
     {
         int truePositive = 0;
@@ -35,6 +35,8 @@ public class EvaluationMetrics
         return (truePositive + falsePositive) == 0 ? 0 : (double)truePositive / (truePositive + falsePositive);
     }
 
+    // Z tych, które faktycznie były TAK ile udało się wyłapać
+    // FN - false negative, było TAK a model powiedział NIE
     public double MeasureRecall(List<string> realLabels, List<string> predictedLabels, string targetClass)
     {
         int truePositive = 0;
@@ -51,7 +53,7 @@ public class EvaluationMetrics
 
         return (truePositive + falseNegative) == 0 ? 0 : (double)truePositive / (truePositive + falseNegative);
     }
-
+    // Miara, które sprawdza czy model był dobry w dwóch metrykach jednoczesnie
     public double MeasureFMeasure(double precision, double recall)
     {
         if (precision + recall == 0) return 0;
